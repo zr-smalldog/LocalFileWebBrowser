@@ -82,14 +82,26 @@ LocalFileWebBrowser/
 
 > 目录中如果仍有 `src/` 或 `vite.config.js` 等历史文件，它们属于早期尝试阶段遗留，目前运行主链路不依赖它们。
 
-## 运行方式
+## 部署与运行说明
+
+### 运行环境要求
+- Linux 虚拟机
+- Node.js 18+（推荐 Node.js 20+）
+- npm 可用
+- 宿主机与虚拟机网络互通
+
+### 项目位置
+```bash
+/home/openclaw/.openclaw/workspace/LocalFileWebBrowser
+```
 
 ### 安装依赖
 ```bash
+cd /home/openclaw/.openclaw/workspace/LocalFileWebBrowser
 npm install
 ```
 
-### 启动
+### 前台启动
 ```bash
 npm start
 ```
@@ -99,6 +111,39 @@ npm start
 
 默认监听：
 - `0.0.0.0`
+
+### 后台启动（推荐）
+```bash
+cd /home/openclaw/.openclaw/workspace/LocalFileWebBrowser
+nohup npm start > server.log 2>&1 &
+```
+
+### 查看进程
+```bash
+ps -ef | grep LocalFileWebBrowser
+ps -ef | grep "node server/index.js"
+```
+
+### 查看日志
+```bash
+tail -f /home/openclaw/.openclaw/workspace/LocalFileWebBrowser/server.log
+```
+
+### 停止服务
+先查 PID：
+```bash
+ps -ef | grep "node server/index.js"
+```
+
+然后结束进程：
+```bash
+kill <PID>
+```
+
+### 修改端口启动
+```bash
+PORT=3211 npm start
+```
 
 ## 访问方式
 
@@ -116,6 +161,45 @@ http://<虚拟机IP>:3210
 ```bash
 http://172.16.26.4:3210
 ```
+
+### 端口连通性检查
+如果宿主机打不开页面，可在虚拟机中检查：
+
+```bash
+ss -ltnp | grep 3210
+curl http://127.0.0.1:3210
+```
+
+如果虚拟机本机能访问，但宿主机不能访问，优先检查：
+- 虚拟机网络模式（桥接 / NAT / 端口映射）
+- 虚拟机防火墙
+- 宿主机到虚拟机 IP 是否可达
+
+### 常见问题排查
+
+#### 1. 页面打不开
+检查服务是否仍在运行：
+```bash
+ps -ef | grep "node server/index.js"
+```
+
+#### 2. 端口被占用
+```bash
+ss -ltnp | grep 3210
+```
+可换端口启动：
+```bash
+PORT=3211 npm start
+```
+
+#### 3. 宿主机可以打开但内容异常
+检查日志：
+```bash
+tail -f server.log
+```
+
+#### 4. Office 文件预览失败
+优先确认文件本身未损坏，并查看服务日志中的报错信息。
 
 ## 安全边界
 
