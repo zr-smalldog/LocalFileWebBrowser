@@ -122,6 +122,7 @@ app.get('/api/preview', async (req, res, next) => {
     const imageExts = new Set(['png','jpg','jpeg','gif','webp','bmp','svg']);
     const textExts = new Set(['txt','log','md','markdown','py','js','mjs','cjs','sh','bash','ts','tsx','jsx','json','yml','yaml','html','css','xml']);
     if (imageExts.has(ext)) return res.json({ kind: 'image', path: rel, name });
+    if (ext === 'pdf') return res.json({ kind: 'pdf', path: rel, name, searchText: '' });
     if (textExts.has(ext)) return res.json(await previewText(abs, rel, ext, name));
     if (ext === 'docx') return res.json(await previewDocx(abs, rel, name));
     if (ext === 'xls' || ext === 'xlsx') return res.json(await previewXlsx(abs, rel, name));
