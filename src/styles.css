@@ -1,0 +1,31 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #0b1020; color: #e7ecf3; }
+a { color: inherit; }
+button { font: inherit; }
+.layout { display: grid; grid-template-columns: 360px 1fr; min-height: 100vh; }
+.sidebar { border-right: 1px solid #24304a; background: #121a2e; display: flex; flex-direction: column; }
+.sidebar-header { padding: 20px; border-bottom: 1px solid #24304a; }
+.sidebar-header h1 { margin: 0 0 8px; font-size: 22px; }
+.root-tag, .muted { color: #91a0bd; font-size: 13px; }
+.breadcrumbs { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px; border-bottom: 1px solid #24304a; }
+.breadcrumbs button, .download-btn { background: #1c2740; color: #dce6f7; border: 1px solid #32425f; border-radius: 8px; padding: 8px 10px; text-decoration: none; cursor: pointer; }
+.entry-list { overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.entry { text-align: left; display: flex; justify-content: space-between; gap: 12px; padding: 12px; border: 1px solid #2a3855; border-radius: 10px; background: #131d34; color: #e7ecf3; cursor: pointer; }
+.entry:hover, .entry.selected { background: #1a2744; border-color: #4f6da8; }
+.entry-name { overflow: hidden; text-overflow: ellipsis; }
+.entry-meta { color: #91a0bd; white-space: nowrap; }
+.content { display: flex; flex-direction: column; min-width: 0; }
+.content-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #24304a; background: #0f1528; }
+.content-header h2 { margin: 4px 0 0; font-size: 24px; word-break: break-all; }
+.preview-scroll { padding: 24px; overflow: auto; }
+.empty { padding: 24px; color: #91a0bd; }
+.error { color: #ff8a8a; }
+.preview-image { max-width: 100%; height: auto; border-radius: 12px; }
+.code-block { margin: 0; padding: 18px; background: #0d1324; border: 1px solid #23304b; border-radius: 12px; overflow: auto; }
+.prose { line-height: 1.7; }
+.prose h1, .prose h2, .prose h3 { margin-top: 1.2em; }
+.prose p, .prose li { color: #dce6f7; }
+.sheet, .slide { margin-bottom: 24px; padding: 18px; border: 1px solid #24304a; border-radius: 12px; background: #10182b; }
+table { border-collapse: collapse; width: 100%; }
+td { border: 1px solid #2b3753; padding: 6px 8px; vertical-align: top; }
+@media (max-width: 960px) { .layout { grid-template-columns: 1fr; } .sidebar { max-height: 50vh; } }
