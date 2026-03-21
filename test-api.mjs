@@ -33,13 +33,19 @@ async function fetchJson(url) {
     if (!data.entries) throw new Error('No entries');
   });
 
-  // 3. 文本预览
+  // 3. 文件元信息
+  await test('文件元信息 API', async () => {
+    const data = await fetchJson(`${BASE}/api/meta?path=LocalFileWebBrowser/README.md`);
+    if (!data.mime || !data.previewMode) throw new Error('Meta incomplete');
+  });
+
+  // 4. 文本预览
   await test('文本预览 (README.md)', async () => {
     const data = await fetchJson(`${BASE}/api/preview?path=LocalFileWebBrowser/README.md`);
     if (!data.html) throw new Error('No html');
   });
 
-  // 4. PDF 预览
+  // 5. PDF 预览
   await test('PDF 预览 (test-preview.pdf)', async () => {
     const data = await fetchJson(`${BASE}/api/preview?path=test-preview.pdf`);
     if (data.kind !== 'pdf') throw new Error(`Kind: ${data.kind}`);

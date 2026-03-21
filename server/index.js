@@ -54,6 +54,34 @@ async function walkFiles(rel = '', recursive = true, bucket = []) {
   }
   return bucket;
 }
+function getPreviewMode(ext = '') {
+  if (['png','jpg','jpeg','gif','webp','bmp','svg'].includes(ext)) return '图片直出预览';
+  if (ext === 'pdf') return 'PDF 内嵌预览';
+  if (['md', 'markdown'].includes(ext)) return 'Markdown 渲染';
+  if (['py','js','mjs','cjs','sh','bash','ts','tsx','jsx','json','yml','yaml','html','css','xml'].includes(ext)) return '代码高亮预览';
+  if (['txt','log'].includes(ext)) return '纯文本预览';
+  if (ext === 'docx') return 'DOCX HTML 预览';
+  if (ext === 'xls' || ext === 'xlsx') return '表格轻量预览';
+  if (ext === 'pptx') return 'PPTX 文本提取预览';
+  return '原文件下载';
+}
+async function getFileMeta(rel = '') {
+  const abs = safeResolve(rel);
+  const st = await fs.stat(abs);
+  const isFile = st.isFile();
+  const ext = isFile ? path.extname(abs).toLowerCase().replace('.', '') : '';
+  return {
+    name: path.basename(abs),
+    path: rel,
+    relativePath: rel,
+    size: st.size,
+    mtime: st.mtime,
+    ext,
+    mime: isFile ? (mime.lookup(abs) || 'application/octet-stream') : 'inode/directory',
+    previewMode: isFile ? getPreviewMode(ext) : '目录',
+    type: isFile ? 'file' : 'directory'
+  };
+}
 function markdownToHtml(md) {
   const escaped = escapeHtml(md);
   return escaped.replace(/^### (.*)$/gm, '<h3>$1</h3>').replace(/^## (.*)$/gm, '<h2>$1</h2>').replace(/^# (.*)$/gm, '<h1>$1</h1>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`([^`]+)`/g, '<code>$1</code>').split(/\n{2,}/).map((block) => /^<h\d/.test(block) ? block : `<p>${block.replace(/\n/g, '<br/>')}</p>`).join('\n');
@@ -100,6 +128,11 @@ async function previewPptx(abs, rel, name) {
   return { kind: 'pptx', path: rel, name, slides, searchText: slides.map((s) => `Slide ${s.index}\n${s.lines.join('\n')}`).join('\n\n') };
 }
 app.get('/api/list', async (req, res, next) => { try { res.json(await listDir(String(req.query.path || ''))); } catch (e) { next(e); } });
+app.get('/api/meta', async (req, res, next) => {
+  try {
+    res.json(await getFileMeta(String(req.query.path || '')));
+  } catch (e) { next(e); }
+});
 app.get('/api/search-files', async (req, res, next) => {
   try {
     const rel = String(req.query.path || '');

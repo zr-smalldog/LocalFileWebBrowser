@@ -25,9 +25,18 @@ import { chromium } from '@playwright/test';
   const searchInput = await page.$('#fileSearchInput');
   console.log('Search input found:', !!searchInput);
   
-  // Test PDF link exists
-  const pdfFiles = await page.$$eval('text=pdf', els => els.length > 0);
-  console.log('PDF files found:', pdfFiles);
+  // Enter project directory and verify metadata panel on README
+  const projectDir = page.locator('.entry', { hasText: 'LocalFileWebBrowser' }).first();
+  if (await projectDir.count()) {
+    await projectDir.click();
+    await page.waitForLoadState('networkidle');
+    const readme = page.locator('.entry', { hasText: 'README.md' }).first();
+    await readme.click();
+    await page.waitForTimeout(800);
+    const metaText = await page.locator('#fileMeta').textContent();
+    console.log('Meta panel includes MIME:', /MIME/.test(metaText || ''));
+    console.log('Meta panel includes README:', /README\.md/.test(metaText || ''));
+  }
   
   console.log('--- Basic test PASSED ---');
   await browser.close();
